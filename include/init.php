@@ -181,4 +181,10 @@
 	#
 
 	$GLOBALS['timings']['init_end'] = microtime_ms();
+
+	# Smarty stuff
+
+	$GLOBALS['error'] = array();
+	$GLOBALS['smarty']->assign_by_ref('error', $error);
+	
 ?>
