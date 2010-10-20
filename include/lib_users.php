@@ -19,7 +19,7 @@
 	# ARE NOT ESCAPED.
 	#
 
-	function users_create_user(&$user){
+	function users_create_user($user){
 
 		#
 		# set up some extra fields first
@@ -51,9 +51,9 @@
 		# cache the unescaped version
 		#
 
-		$user['user_id'] = $rsp['insert_id'];
+		$user['id'] = $rsp['insert_id'];
 
-		$GLOBALS['user_local_cache'][$user['user_id']] = $user;
+		$GLOBALS['user_local_cache'][$user['id']] = $user;
 		return $user;
 	}
 
@@ -70,13 +70,13 @@
 			$update[$k] = AddSlashes($v);
 		}
 
-		$rsp = db_update('Users', $update, "user_id=$user[user_id]");
+		$rsp = db_update('Users', $update, "id=$user[id]");
 
 		if (!$rsp['ok']){
 			return null;
 		}
 
-		unset($GLOBALS['user_local_cache'][$user['user_id']]);
+		unset($GLOBALS['user_local_cache'][$user['id']]);
 		return 1;
 	}
 
@@ -107,14 +107,14 @@
 
 	function users_reload_user(&$user){
 
-		$user = users_get_by_id($user['user_id']);
+		$user = users_get_by_id($user['id']);
 	}
 
 	#################################################################
 
 	function users_get_by_id($id){
 
-		$user = db_single(db_fetch("SELECT * FROM Users WHERE user_id=".intval($id)));
+		$user = db_single(db_fetch("SELECT * FROM Users WHERE id=".intval($id)));
 
 		$GLOBALS['user_local_cache'][$id] = $user;
 
@@ -157,7 +157,7 @@
 
 		$enc_email = AddSlashes($email);
 
-		return db_single(db_fetch("SELECT user_id FROM Users WHERE email='{$enc_email}' AND deleted != 0"));
+		return db_single(db_fetch("SELECT id FROM Users WHERE email='{$enc_email}' AND deleted != 0"));
 	}
 
 	#################################################################
@@ -166,7 +166,7 @@
 
 		$enc_username = AddSlashes($username);
 
-		return db_single(db_fetch("SELECT user_id FROM Users WHERE username='{$enc_username}' AND deleted != 0"));
+		return db_single(db_fetch("SELECT id FROM Users WHERE username='{$enc_username}' AND deleted != 0"));
 	}
 
 	#################################################################
@@ -188,7 +188,7 @@
 
 	function users_purge_password_reset_codes(&$user){
 
-		$rsp = db_write("DELETE FROM UsersPasswordReset WHERE user_id=$user[user_id]");
+		$rsp = db_write("DELETE FROM UsersPasswordReset WHERE user_id=$user[id]");
 
 		return $rsp['ok'];
 	}
@@ -218,8 +218,6 @@
 
 		users_purge_password_reset_codes($user);
 
-		$enc_user_id = AddSlashes($user['user_id']);
-
 		$code = '';
 
 		while (!$code){
@@ -235,7 +233,7 @@
 		}
 
 		$rsp = db_insert('UsersPasswordReset', array(
-			'user_id'	=> $enc_user_id,
+			'user_id'	=> $user['id'],
 			'reset_code'	=> $enc_code,
 			'created'	=> time(),
 		));
