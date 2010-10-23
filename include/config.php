@@ -6,6 +6,7 @@
 
 	$GLOBALS['cfg'] = array();
 
+	$GLOBALS['cfg']['environment'] = 'dev';
 
 	#
 	# Things you'll certainly need to tweak
