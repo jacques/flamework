@@ -85,7 +85,7 @@
 
 				$redir = ($redir) ? $redir : '/';
 
-				login_do_login($user);
+				login_do_login($user, $redir);
 				exit;
 			}
 
