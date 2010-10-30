@@ -31,6 +31,8 @@
 		$user['created'] = time();
 		$user['conf_code'] = random_string(24);
 
+		$user['cluster_id'] = users_assign_cluster_id();
+
 		#
 		# now create the escaped version
 		#
@@ -246,6 +248,19 @@
 		}
 
 		return $code;
+	}
+
+	#################################################################
+
+	function users_assign_cluster_id(){
+
+		if ($GLOBALS['cfg']['db_enable_poormans_federation']){
+			return 1;
+		}
+
+		# TO DO: an actual cluster ID if federated
+
+		return 1;
 	}
 
 	#################################################################
